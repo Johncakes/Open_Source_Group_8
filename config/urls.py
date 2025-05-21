@@ -20,6 +20,7 @@ from django.urls import path
 from django.urls.conf import include
 
 urlpatterns = [
+    path("", include("movie.urls")),
     path("admin/", admin.site.urls),
-    path("movies/", include("movie.urls"))
 ]
+
