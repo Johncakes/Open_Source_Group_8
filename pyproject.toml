@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "django>=5.2.1",
+    "requests>=2.32.3",
     "ruff>=0.11.9",
 ]
 
@@ -14,7 +15,7 @@ target-version = "py313"
 line-length = 100
 
 [tool.ruff.lint]
-select = ["E", "F", "B", "I", "UP", "C4", "DJ"]
+select = ["E", "F", "B", "I", "UP", "C4"]
 
 [tool.ruff.lint.isort]
 combine-as-imports = true
