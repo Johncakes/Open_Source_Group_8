@@ -1,3 +1,4 @@
+{% load static %}
 <!doctype html>
 <html lang="en">
   <head>
@@ -5,27 +6,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Bootstrap demo</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
   </head>
   <body>
+    <script>
+        const movies = JSON.parse('{{ movies | escapejs }}');
+        console.log(movies);
+    </script>
     {% include 'Components/navbar.html' %}
 
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Carousel wrapper -->
+    <div class="container mt-5">
+        <!-- Carousel wrapper -->
             <div id="movieCarousel" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-inner">
                     <div class="carousel-item active">
-                        <div class = "d-flex justify-content-center gap-3">
+                        <div class="d-flex justify-content-center gap-3">
+                            {% for movie in movie|slice:":3" %}
                             {% include 'Components/movieCard.html' %}
-                            {% include 'Components/movieCard.html' %}
-                            {% include 'Components/movieCard.html' %}
+                            {% endfor %}
                         </div>
-                    </div>
-                    <div class="carousel-item">
-                        {% include 'Components/movieCard.html' %}
-                    </div>
-                    <div class="carousel-item">
-                        {% include 'Components/movieCard.html' %}
                     </div>
                 </div>
                 <button class="carousel-control-prev" type="button" data-bs-target="#movieCarousel" data-bs-slide="prev">
@@ -37,13 +36,9 @@
                     <span class="visually-hidden">Next</span>
                 </button>
             </div>
-
-        </div>
     </div>
 
-    <footer>
-        {% include 'Components/footer.html' %}
-    </footer>
+    {% include 'Components/footer.html' %}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
   </body>
 
