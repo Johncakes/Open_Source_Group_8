@@ -5,6 +5,9 @@ from movie.models import Review
 from movie.models.movie import Movie
 from django.db.models import Avg
 
+def index(request):
+    movie = Movie.objects.all()
+    return render(request, 'index.html', {'movie': movie})
 
 def movie_detail(request, movie_id):
     movie = get_object_or_404(Movie, pk=movie_id)
