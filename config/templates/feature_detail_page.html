@@ -55,7 +55,17 @@
         <div class="col-md-8">
             <h3>줄거리</h3>
             <p>{{ movie.overview }}</p>
-            <!--추후 평균 별점 추가 위치-->
+            <!--평균 별점 추가, movie에 reviews 있다는 가정 하에 views에 average_rating 추가함(주의!!)-->
+            {% if average_rating %}
+                <div class="mt-4 p-3 bg-warning-subtle rounded shadow-sm">
+                    <h5 class="mb-1 text-dark">평균 별점</h5>
+                    <p class="mb-0 fs-5 fw-bold text-dark">{{ average_rating|floatformat:1 }} / 5.0</p>
+                </div>
+            {% else %}
+                <div class="mt-4 p-3 bg-light border rounded">
+                    <p class="mb-0 text-muted">아직 별점이 없습니다.</p>
+                </div>
+            {% endif %}
         </div>
     </div>
 
@@ -99,7 +109,26 @@
         {% endfor %}
     </div>
 
-    <!--추후 리뷰 추가 위치-->
+    <!--리뷰 추가, 모델 예상: (영화, 사용자, 리뷰 내용, 평점, 작성일)-->
+    <h3 class="text-secondary mb-3">리뷰</h3>
+    <div class="row g-4">
+        {% for review in movie.reviews.all %}
+            <div class="col-md-6">
+                <div class="card bg-white shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ review.user }}</h5>
+                        <p class="card-text">{{ review.content }}</p>
+                        <p class="text-muted">
+                            평점: {{ review.rating }} / 5<br>
+                            작성일: {{ review.created_at|date:"Y.m.d H:i" }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p class="text-muted">아직 작성된 리뷰가 없습니다.</p>
+        {% endfor %}
+    </div>
 </div>
 
 </body>
