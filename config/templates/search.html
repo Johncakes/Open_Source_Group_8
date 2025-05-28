@@ -64,6 +64,33 @@
                     </div>
                 {% endfor %}
             </div>
+            <nav class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if results.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link"
+                               href="?q={{ query }}&sort={{ sort }}&page={{ results.previous_page_number }}">이전</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">이전</span></li>
+                    {% endif %}
+
+                    {% for num in results.paginator.page_range %}
+                        <li class="page-item {% if results.number == num %}active{% endif %}">
+                            <a class="page-link" href="?q={{ query }}&sort={{ sort }}&page={{ num }}">{{ num }}</a>
+                        </li>
+                    {% endfor %}
+
+                    {% if results.has_next %}
+                        <li class="page-item">
+                            <a class="page-link"
+                               href="?q={{ query }}&sort={{ sort }}&page={{ results.next_page_number }}">다음</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">다음</span></li>
+                    {% endif %}
+                </ul>
+            </nav>
         {% elif query %}
             <div class="alert alert-warning mt-4" role="alert">
                 검색 결과가 없습니다.
