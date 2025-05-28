@@ -24,12 +24,7 @@
             <div class="col-md-4">
                 <input type="text" name="q" class="form-control" placeholder="검색어 입력" value="{{ query }}">
             </div>
-            <div class="col-md-3">
-                <select class="form-select" name="field">
-                    <option value="title" {% if field == 'title' %}selected{% endif %}>제목 (한글)</option>
-                    <option value="original_title" {% if field == 'original_title' %}selected{% endif %}>원제목 (영문)</option>
-                </select>
-            </div>
+
             <div class="col-md-2">
                 <select class="form-select" name="sort">
                     <option value="latest" {% if sort == 'latest' %}selected{% endif %}>최신순</option>
@@ -59,7 +54,10 @@
                             <div class="card-body p-2">
                                 <h5 class="card-title mb-1" style="font-size: 1rem;">{{ movie.title }}</h5>
                                 <p class="card-text mb-0" style="font-size: 0.9rem;">
-                                    {{ movie.overview|slice:":30" }}{% if movie.overview|length > 30 %}...{% endif %}
+
+                                    <li><strong>개봉일:</strong> {{ movie.release_date|default:"정보 없음" }}</li>
+                                    <li><strong>국가:</strong> {{ movie.origin_country|default:"정보 없음" }}</li>
+                                    <li><strong>인기도:</strong> {{ movie.popularity|floatformat:1 }}</li>
                                 </p>
                             </div>
                         </div>
