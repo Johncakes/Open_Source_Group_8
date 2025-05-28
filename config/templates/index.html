@@ -9,10 +9,6 @@
     <link rel="stylesheet" href="{% static 'styles.css' %}">
   </head>
   <body>
-    <script>
-        const movies = JSON.parse('{{ movies | escapejs }}');
-        console.log(movies);
-    </script>
     {% include 'Components/navbar.html' %}
 
    {% include 'Components/carousel.html' with title="Popular Movies" movie_list=popular_movie carousel_id="popMovieCarousel" %}
