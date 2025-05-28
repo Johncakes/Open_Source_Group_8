@@ -49,7 +49,7 @@
 </section>
 
 <div class="container my-5">
-    <!--포스터(좌) + 줄거리(우)-->
+    <!--포스터(좌) + 줄거리, 평균 별점(우)-->
     <div class="row g-4 mb-5">
         <div class="col-md-4 text-center">
             <img src="https://image.tmdb.org/t/p/w500{{ movie.poster_path }}" alt="포스터"
@@ -58,7 +58,7 @@
         <div class="col-md-8">
             <h3>줄거리</h3>
             <p>{{ movie.overview }}</p>
-            <!--평균 별점 추가, movie에 reviews 있다는 가정 하에 views에 average_rating 추가함(주의!!)-->
+            <!--평균 별점-->
             {% if average_rating %}
                 <div class="mt-4 p-3 bg-warning-subtle rounded shadow-sm">
                     <h5 class="mb-1 text-dark">평균 별점</h5>
@@ -136,14 +136,14 @@
         </div>
         <button type="submit" class="btn btn-primary">리뷰 등록</button>
     </form>
-    <!--리뷰 추가, 모델 예상: (영화, 사용자, 리뷰 내용, 평점, 작성일)-->
+    <!--리뷰 출력-->
     <h3 class="text-secondary mb-3">리뷰</h3>
     <div class="row g-4">
         {% for review in movie.reviews.all %}
             <div class="col-md-6">
                 <div class="card bg-white shadow-sm h-100">
                     <div class="card-body">
-                        <h5 class="card-title">{{ review.user }}</h5>
+                        <h5 class="card-title">{{ review.username }}</h5>
                         <p class="card-text">{{ review.content }}</p>
                         <p class="text-muted">
                             평점: {{ review.rating }} / 5<br>
