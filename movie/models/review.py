@@ -29,10 +29,10 @@ class Review(models.Model):
 
     @classmethod
     def anonymous_review(cls, movie, content, rating) -> "Review":
-        return cls(movie=movie, username=cls.random_username(), content=content, rating=rating)
+        return cls(movie=movie, username=cls.generate_random_username(), content=content, rating=rating)
 
     @staticmethod
-    def random_username() -> str:
+    def generate_random_username() -> str:
         random_suffix = random.randint(1000, 9999)
 
         return f"익명{random_suffix}"
