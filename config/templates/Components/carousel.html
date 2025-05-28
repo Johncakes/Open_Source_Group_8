@@ -1,0 +1,30 @@
+<!-- Components/carousel.html -->
+<div class="mt-5 container">
+    <h3>{{ title }}</h3>
+    <div id="{{ carousel_id }}" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            {% for movie in movie_list %}
+                {% if forloop.counter0|divisibleby:5 %}
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        <div class="d-flex justify-content-center gap-3">
+                {% endif %}
+                            {% include 'Components/movieCard.html' %}
+                {% if forloop.counter0|add:1|divisibleby:5 or forloop.last %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- Controls -->
+        <button class="carousel-control-prev custom-carousel-btn" type="button" data-bs-target="#{{ carousel_id }}" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next custom-carousel-btn" type="button" data-bs-target="#{{ carousel_id }}" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+
+    </div>
+</div>

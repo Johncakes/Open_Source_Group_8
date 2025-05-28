@@ -1,0 +1,9 @@
+/* styles.css */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  filter: invert(1) grayscale(1) brightness(0.3);
+}
+
+.body{
+  background: #006b1b;
+}
