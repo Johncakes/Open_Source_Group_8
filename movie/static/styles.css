@@ -1,9 +1,10 @@
 /* styles.css */
-.carousel-control-prev-icon,
-.carousel-control-next-icon {
-  filter: invert(1) grayscale(1) brightness(0.3);
+
+
+.carousel-control-prev.custom-carousel-btn {
+    left: 0;
 }
 
-.body{
-  background: #006b1b;
+.carousel-control-next.custom-carousel-btn {
+    right: 0;
 }
