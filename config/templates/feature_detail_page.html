@@ -14,16 +14,19 @@
             color: white;
             padding: 6rem 2rem;
         }
+
         .profile-img {
             width: 100%;
             height: 250px;
             object-fit: cover;
             border-radius: 10px;
         }
+
         .card-title {
             font-size: 1rem;
             font-weight: bold;
         }
+
         .card-text {
             font-size: 0.9rem;
         }
@@ -99,8 +102,47 @@
         {% endfor %}
     </div>
 
-    <!--추후 리뷰 추가 위치-->
-</div>
+    <!--리뷰 작성-->
+    <h3 class="text-secondary mb-3">리뷰 작성</h3>
+    <form method="post" action="{% url 'create_review' movie.id %}" class="mb-5">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="rating" class="form-label">평점</label>
+            <select name="rating" id="rating" class="form-select w-auto" required>
+                <option value="0.5">0.5</option>
+                <option value="1">1</option>
+                <option value="1.5">1.5</option>
+                <option value="2">2</option>
+                <option value="2.5">2.5</option>
+                <option value="3">3</option>
+                <option value="3.5">3.5</option>
+                <option value="4">4</option>
+                <option value="4.5">4.5</option>
+                <option value="5">5</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="content" class="form-label">내용</label>
+            <textarea name="content" id="content" class="form-control" rows="4" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">리뷰 등록</button>
+    </form>
 
+    <!--리뷰 목록-->
+    <h3 class="text-secondary mb-3">리뷰 목록</h3>
+    {% if movie.reviews.exists %}
+        <ul class="list-group mb-5">
+            {% for review in movie.reviews.all %}
+                <li class="list-group-item">
+                    <strong>{{ review.username }}</strong> - {{ review.rating }}점<br>
+                    <p class="mb-1">{{ review.content|linebreaksbr }}</p>
+                    <small class="text-muted">{{ review.created_at|date:"Y-m-d H:i" }}</small>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="text-muted">아직 리뷰가 없습니다.</p>
+    {% endif %}
+</div>
 </body>
 </html>
