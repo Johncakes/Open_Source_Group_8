@@ -1,17 +1,19 @@
-from django.shortcuts import render, get_object_or_404
-from movie.models.movie import Movie
-from django.db.models import Q
 from django.core.paginator import Paginator
+from django.db.models import Q
+from django.shortcuts import render, get_object_or_404
+
+from movie.models.movie import Movie
+
 
 def movie_detail(request, movie_id):
     movie = get_object_or_404(Movie, pk=movie_id)
     return render(request, 'feature_detail_page.html', {'movie': movie})
 
+
 def movie_search(request):
     query = request.GET.get('q', '')
 
     sort = request.GET.get('sort', 'latest')
-    #results = []
     results = Movie.objects.all()  # 기본: 전체에서 시작
 
     if query:
@@ -23,13 +25,24 @@ def movie_search(request):
     elif sort == 'popular':
         results = results.order_by('-popularity')
 
-    paginator = Paginator(results, 20)
+    page_size = int(request.GET.get('size', 20))
+    paginator = Paginator(results, page_size)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
+    current = page_obj.number
+    total = paginator.num_pages
+
+    start = max(current - 5, 1)
+    end = min(current + 4, total)
+    page_range = range(start, end + 1)
+
     return render(request, 'search.html', {
         'query': query,
-
         'sort': sort,
-        'results': results
+        'page_size': page_size,
+        'page_obj': page_obj,
+        'results': page_obj.object_list,
+        'page_range': page_range,
+        'total_pages': total,
     })
