@@ -1,8 +1,10 @@
-<div class="card" style="width: 18rem;">
-  <img src="..." class="card-img-top" alt="...">
-  <div class="card-body mr-3">
-    <h5 class="card-title">Card title</h5>
-    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
-    <a href="#" class="btn btn-primary">Go somewhere</a>
-  </div>
-</div>
+<a href="movies/{{ movie.id }}" style="text-decoration:none; color : inherit;">
+    <div class="card" style="width: 12rem">
+        <img src="https://image.tmdb.org/t/p/w500{{ movie.poster_path }}" class="card-img-top" alt="..." style="height: 300px ; object-fit: cover;"/>
+        <div class="card-body mr-3">
+            <h5 class="card-title text-truncate" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                {{ movie.title }}
+            </h5>
+        </div>
+    </div>
+</a>
