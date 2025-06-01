@@ -11,12 +11,20 @@ def index(request):
     random_movie = movie.order_by('?')[:30]
     return render(request, 'index.html', {'movie': movie, 'popular_movie': popular_movie, 'random_movie': random_movie})
 
+def get_star_list(rating):
+    full = int(rating)
+    half = 1 if rating - full >= 0.25 and rating - full < 0.75 else 0
+    empty = 5 - full - half
+    return ['full'] * full + ['half'] * half + ['empty'] * empty
+
 def movie_detail(request, movie_id):
     movie = get_object_or_404(Movie, pk=movie_id)
     average_rating = movie.reviews.aggregate(avg=Avg('rating'))['avg']
+    star_list = get_star_list(average_rating or 0)
     return render(request, 'feature_detail_page.html', {
         'movie': movie,
-        'average_rating': average_rating
+        'average_rating': average_rating,
+        'star_list': star_list
     })
 
 
