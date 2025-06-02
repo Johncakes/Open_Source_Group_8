@@ -4,7 +4,6 @@ import time
 
 from movie.clients.tmdb import tmdb_client
 
-
 POPULAR_FILE = "popular_movies.json"
 DETAIL_FILE = "movie_details.json"
 

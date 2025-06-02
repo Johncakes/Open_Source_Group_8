@@ -1,15 +1,13 @@
-from datetime import datetime
 import json
 import os
+from datetime import datetime
 
 import django
-
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.local")
 django.setup()
 
-from movie.models import Genre, Movie, MovieCast, MovieCrew
-
+from movie.models import Genre, Movie, MovieCast, MovieCrew  # noqa
 
 INPUT_FILE = "movie_details.json"
 

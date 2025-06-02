@@ -3,7 +3,6 @@ import time
 
 from movie.clients.tmdb import tmdb_client
 
-
 OUTPUT_FILE = "popular_movies.json"
 MAX_PAGES = 5
 

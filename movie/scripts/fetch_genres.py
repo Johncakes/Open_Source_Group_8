@@ -2,7 +2,6 @@ import json
 
 from movie.clients.tmdb import tmdb_client
 
-
 OUTPUT_FILE = "genres.json"
 
 

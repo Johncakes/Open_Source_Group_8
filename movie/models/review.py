@@ -29,7 +29,9 @@ class Review(models.Model):
 
     @classmethod
     def anonymous_review(cls, movie, content, rating) -> "Review":
-        return cls(movie=movie, username=cls.generate_random_username(), content=content, rating=rating)
+        return cls(
+            movie=movie, username=cls.generate_random_username(), content=content, rating=rating
+        )
 
     @staticmethod
     def generate_random_username() -> str:
