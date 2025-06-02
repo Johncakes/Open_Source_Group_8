@@ -3,12 +3,10 @@ import os
 
 import django
 
-
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.local")
 django.setup()
 
-from movie.models import Genre
-
+from movie.models import Genre  # noqa
 
 INPUT_FILE = "genres.json"
 
