@@ -21,5 +21,6 @@ from django.urls.conf import include
 
 urlpatterns = [
     path("", include("movie.urls")),
+    path("accounts/", include("account.urls")),
     path("admin/", admin.site.urls),
 ]
