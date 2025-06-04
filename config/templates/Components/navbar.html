@@ -25,7 +25,7 @@
             </form>
                 {% if user.is_authenticated %}
                     <li class="nav-item me-2">
-                        <span class="nav-link">안녕하세요, {{ user.username }}님</span>
+                        <a class="nav-link" href="{% url 'profile' %}">프로필</a>
                     </li>
                     <li class="nav-item">
                         <form method="post" action="{% url 'logout' %}">

@@ -3,7 +3,19 @@ from django.db import models
 from movie.models import Genre
 
 
+class MovieQuerySet(models.QuerySet):
+    def recommended_by_user(self, user, genres, limit=10):
+        return (
+            self.filter(genres__in=genres)
+            .exclude(reviews__user=user)
+            .distinct()
+            .order_by("-popularity")[:limit]
+        )
+
+
 class Movie(models.Model):
+    objects = MovieQuerySet.as_manager()
+
     class Meta:
         db_table = "movie"
 

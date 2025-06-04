@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% load custom_filters %}
+
+{% block style %}
+    <style>
+        .star-rating {
+            position: relative;
+            display: inline-block;
+            font-size: 1.5rem;
+            color: #ddd;
+        }
+
+        .star-rating::before {
+            content: "★★★★★";
+            letter-spacing: 0.1rem;
+        }
+
+        .star-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            white-space: nowrap;
+            color: #ffc107;
+        }
+
+        .star-fill::before {
+            content: "★★★★★";
+            letter-spacing: 0.1rem;
+        }
+    </style>
+{% endblock %}
+
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="row g-4">
+            <!-- 리뷰 섹션 -->
+            <div class="col-md-6">
+                <h2 class="mb-4">리뷰</h2>
+
+                <!-- 평균 별점 -->
+                <div class="mb-4">
+                    <h5>평균 별점</h5>
+                    {% if average_rating %}
+                        <div class="d-flex align-items-center mb-3 gap-2" style="font-size: 1.5rem;">
+                            <div class="star-rating" title="{{ average_rating|floatformat:1 }}">
+                                <div class="star-fill" style="width: {{ average_rating|to_percentage }}%;"></div>
+                            </div>
+                            <span class="me-2">{{ average_rating|floatformat:1 }}</span>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- 내가 쓴 리뷰 목록 -->
+                <div class="mb-4">
+                    <h5>작성한 리뷰</h5>
+                    {% if reviews %}
+                        <ul class="list-group">
+                            {% for review in reviews %}
+                                <li class="list-group-item">
+                                    <a href="{% url 'movie_detail' review.movie.id %}" class="text-decoration-none">
+                                        {{ review.movie.title }}
+                                    </a>
+                                    <span class="text-muted">({{ review.rating }}점)</span><br>
+                                    {{ review.content|linebreaksbr }}
+                                    <div class="text-muted small">{{ review.created_at|date:"Y-m-d H:i" }}</div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted">작성한 리뷰가 없습니다.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- 영화 섹션 -->
+            <div class="col-md-6">
+                <h2 class="mb-4">영화</h2>
+
+                <!-- 나의 취향 -->
+                <div class="mb-4">
+                    <h5>나의 취향</h5>
+                    {% if top_genres %}
+                        <div class="d-flex flex-wrap gap-2">
+                            {% for genre in top_genres %}
+                                <a href="{% url 'movie_search' %}?genre={{ genre.id }}"
+                                   class="btn btn-success btn-md">
+                                    {{ genre.name }}
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">아직 리뷰한 장르가 없습니다.</p>
+                    {% endif %}
+                </div>
+
+                <!-- 추천 영화 -->
+                <div class="mb-4">
+                    <h5>추천 영화</h5>
+                    {% if recommended_movies %}
+                        <div class="row row-cols-2 row-cols-sm-3 row-cols-md-3 g-3">
+                            {% for movie in recommended_movies %}
+                                <div class="col">
+                                    <div class="card h-100 text-center">
+                                        <a href="{% url 'movie_detail' movie.id %}">
+                                            <img src="https://image.tmdb.org/t/p/w500{{ movie.poster_path }}"
+                                                 class="card-img-top" alt="{{ movie.title }}"
+                                                 style="height: 220px; object-fit: cover;">
+                                        </a>
+                                        <div class="card-body p-2">
+                                            <h6 class="card-title mb-0">{{ movie.title }}</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">추천할 영화가 아직 없습니다.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

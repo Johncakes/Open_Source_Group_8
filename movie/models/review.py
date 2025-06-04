@@ -3,11 +3,22 @@ import random
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import Avg
 
 from movie.models import Movie
 
 
+class ReviewQuerySet(models.QuerySet):
+    def find_by_user(self, user):
+        return self.filter(user=user).select_related("movie").order_by("-created_at")
+
+    def average_rating(self):
+        return self.aggregate(avg=Avg("rating"))["avg"]
+
+
 class Review(models.Model):
+    objects = ReviewQuerySet.as_manager()
+
     class Meta:
         db_table = "review"
         constraints = [
