@@ -32,7 +32,7 @@ def movie_detail(request, movie_id):
     star_list = get_star_list(average_rating or 0)
     return render(
         request,
-        "feature_detail_page.html",
+        "movie_detail.html",
         {"movie": movie, "average_rating": average_rating, "star_list": star_list},
     )
 

@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ movie.title }}
+{% endblock %}
+
+{% block style %}
+    <style>
+        .backdrop {
+            background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.9)),
+            url("https://image.tmdb.org/t/p/original{{ movie.backdrop_path }}");
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 4rem 2rem;
+            min-height: 65vh;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: end;
+        }
+
+        .profile-img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        .card-text {
+            font-size: 0.9rem;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <!--배경 이미지 + 영화 정보 통합(한글제목, 개봉연도, 장르, 상영시간(분), 원제, 국가, 제작사)-->
+    <section class="backdrop">
+        <div class="container">
+            <h1 class="display-5">{{ movie.title }}</h1>
+            <p class="lead">{{ movie.release_date|date:"Y" }} ·
+                {% for genre in movie.genres.all %}
+                    {{ genre.name }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+                · {{ movie.runtime }}분
+            </p>
+            <p>{{ movie.original_title }} / {{ movie.origin_country }} / {{ movie.production_company }}</p>
+        </div>
+    </section>
+
+    <div class="container my-5">
+        <!--포스터(좌) + 줄거리, 평균 별점(우)-->
+        <div class="row g-4 mb-5">
+            <div class="col-md-4 text-center">
+                <img src="https://image.tmdb.org/t/p/w500{{ movie.poster_path }}" alt="포스터"
+                     class="img-fluid rounded shadow">
+            </div>
+            <div class="col-md-8">
+                <h3>줄거리</h3>
+                <p>{{ movie.overview }}</p>
+                <!--평균 별점-->
+                {% if average_rating %}
+                    <div class="mt-4 p-3 bg-warning-subtle rounded shadow-sm">
+                        <h5 class="mb-1 text-dark">평균 별점</h5>
+                        <p class="mb-0 fs-5 fw-bold text-dark">{{ average_rating|floatformat:1 }} / 5.0</p>
+                        <!--반 별 포함 평균 별점 시각화-->
+                        <div class="text-warning" style="font-size: 1.3rem;">
+                            {% for star in star_list %}
+                                {% if star == 'full' %}
+                                    <i class="fas fa-star"></i>
+                                {% elif star == 'half' %}
+                                    <i class="fas fa-star-half-alt"></i>
+                                {% else %}
+                                    <i class="far fa-star"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <p>{{ movie.reviews.count }}명 참여</p>
+                    </div>
+                {% else %}
+                    <div class="mt-4 p-3 bg-light border rounded">
+                        <p class="mb-0 text-muted">아직 별점이 없습니다.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!--출연진-->
+        <h3 class="text-secondary mb-3">출연</h3>
+        <div class="row row-cols-2 row-cols-sm-3 row-cols-md-5 g-4 mb-5">
+            {% for cast in movie.casts.all %}
+                <div class="col">
+                    <div class="card h-100 text-center">
+                        <img src="{% if cast.profile_path %}https://image.tmdb.org/t/p/w500{{ cast.profile_path }}{% else %}https://dummyimage.com/300x450/000/fff&text=No+Image{% endif %}"
+                             class="profile-img card-img-top" alt="{{ cast.name }}">
+                        <div class="card-body p-2">
+                            <h5 class="card-title">{{ cast.name }}</h5>
+                            <p class="card-text text-muted">{{ cast.character }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="text-muted">출연진 정보 없음</p>
+            {% endfor %}
+        </div>
+
+        <!--제작진-->
+        <h3 class="text-secondary mb-3">제작진</h3>
+        <div class="row row-cols-2 row-cols-sm-3 row-cols-md-5 g-4 mb-5">
+            {% for crew in movie.crews.all %}
+                <div class="col">
+                    <div class="card h-100 text-center">
+                        <img src="{% if crew.profile_path %}https://image.tmdb.org/t/p/w500{{ crew.profile_path }}{% else %}https://dummyimage.com/300x450/000/fff&text=No+Image{% endif %}"
+                             class="profile-img card-img-top" alt="{{ crew.name }}">
+                        <div class="card-body p-2">
+                            <h5 class="card-title">{{ crew.name }}</h5>
+                            <p class="card-text text-muted">{{ crew.job }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="text-muted">제작진 정보 없음</p>
+            {% endfor %}
+        </div>
+
+        <h3 class="text-secondary mb-3">리뷰 작성</h3>
+        <form method="post" action="{% url 'create_review' movie.id %}" class="mb-5">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="rating" class="form-label">평점</label>
+                <select name="rating" id="rating" class="form-select w-auto" required>
+                    <option value="0.5">0.5</option>
+                    <option value="1">1</option>
+                    <option value="1.5">1.5</option>
+                    <option value="2">2</option>
+                    <option value="2.5">2.5</option>
+                    <option value="3">3</option>
+                    <option value="3.5">3.5</option>
+                    <option value="4">4</option>
+                    <option value="4.5">4.5</option>
+                    <option value="5">5</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="content" class="form-label">내용</label>
+                <textarea name="content" id="content" class="form-control" rows="4" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">리뷰 등록</button>
+        </form>
+        <!--리뷰 출력-->
+        <h3 class="text-secondary mb-3">리뷰</h3>
+        <div class="row g-4">
+            {% for review in movie.reviews.all %}
+                <div class="col-md-6">
+                    <div class="card bg-white shadow-sm h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ review.username }}</h5>
+                            <p class="card-text">{{ review.content }}</p>
+                            <p class="text-muted">
+                                평점: {{ review.rating }} / 5<br>
+                                작성일: {{ review.created_at|date:"Y.m.d H:i" }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="text-muted">아직 작성된 리뷰가 없습니다.</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
