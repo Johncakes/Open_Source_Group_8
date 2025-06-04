@@ -22,6 +22,7 @@
             text-align: center; /* 가운데 정렬 */
             display: inline-block;
         }
+        li {  list-style-type: none;}
     </style>
 </head>
 <body class="bg-light">
@@ -39,6 +40,16 @@
                 <option value="popular" {% if sort == 'popular' %}selected{% endif %}>인기순</option>
             </select>
         </div>
+        <div class="col-md-2">
+            <select class="form-select" name="genre">
+                <option value="">전체 장르</option>
+                {% for genre in genres %}
+                    <option value="{{ genre.id }}" {% if genre.id|stringformat:"s" == selected_genre %}selected{% endif %}>
+                        {{ genre.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
         <div class="col-auto">
             <button type="submit" class="btn btn-primary">검색</button>
         </div>
@@ -49,14 +60,14 @@
             {% if page_obj.has_previous %}
                 <li class="page-item">
                     <a class="page-link"
-                       href="?page={{ page_obj.previous_page_number }}&q={{ query }}&sort={{ sort }}&size={{ page_size }}">«
+                       href="?page={{ page_obj.previous_page_number }}&q={{ query }}&sort={{ sort }}&size={{ page_size }}&genre={{ selected_genre }}">«
                         이전</a>
                 </li>
             {% endif %}
 
             {% if page_range|first > 1 %}
                 <li class="page-item">
-                    <a class="page-link" href="?page=1&q={{ query }}&sort={{ sort }}&size={{ page_size }}">1</a>
+                    <a class="page-link" href="?page=1&q={{ query }}&sort={{ sort }}&size={{ page_size }}&genre={{ selected_genre }}">1</a>
                 </li>
                 <li class="page-item disabled"><span class="page-link">…</span></li>
             {% endif %}
@@ -67,7 +78,7 @@
                 {% else %}
                     <li class="page-item">
                         <a class="page-link"
-                           href="?page={{ num }}&q={{ query }}&sort={{ sort }}&size={{ page_size }}">{{ num }}</a>
+                           href="?page={{ num }}&q={{ query }}&sort={{ sort }}&size={{ page_size }}&genre={{ selected_genre }}">{{ num }}</a>
                     </li>
                 {% endif %}
             {% endfor %}
@@ -76,7 +87,7 @@
                 <li class="page-item disabled"><span class="page-link">…</span></li>
                 <li class="page-item">
                     <a class="page-link"
-                       href="?page={{ total_pages }}&q={{ query }}&sort={{ sort }}&size={{ page_size }}">{{ total_pages }}</a>
+                       href="?page={{ total_pages }}&q={{ query }}&sort={{ sort }}&size={{ page_size }}&genre={{ selected_genre }}">{{ total_pages }}</a>
                 </li>
             {% endif %}
 
@@ -108,12 +119,21 @@
                             </div>
                         {% endif %}
                         <div class="card-body p-2">
-                            <h5 class="card-title mb-1" style="font-size: 1rem;">{{ movie.title }}</h5>
+                            <h5 class="card-title mb-1" style="font-size: 1rem;"><strong>{{ movie.title }}</strong></h5>
                             <p class="card-text mb-0" style="font-size: 0.9rem;">
 
-                                <li><strong>개봉일:</strong> {{ movie.release_date|default:"정보 없음" }}</li>
-                                <li><strong>국가:</strong> {{ movie.origin_country|default:"정보 없음" }}</li>
-                                <li><strong>인기도:</strong> {{ movie.popularity|floatformat:1 }}</li>
+                                <li>
+                                    {{ movie.release_date|default:"정보 없음" }} &nbsp; / &nbsp;
+
+                                    {{ movie.origin_country|default:"정보 없음" }}
+                                </li>
+                                <li>
+                                    {% for genre in movie.genres.all %}
+                                        {{ genre.name }}{% if not forloop.last %}, {% endif %}
+                                    {% endfor %}
+                                </li>
+
+                                <li>인기도: {{ movie.popularity|floatformat:1 }}</li>
                             </p>
                         </div>
                     </div>

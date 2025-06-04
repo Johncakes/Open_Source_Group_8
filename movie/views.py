@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
 from movie.models import Review
-from movie.models.movie import Movie
+from movie.models.movie import Movie,Genre
 
 
 def index(request):
@@ -57,16 +57,21 @@ def create_review(request, movie_id):
 
 def movie_search(request):
     query = request.GET.get("q", "")
-
+    selected_genre = request.GET.get("genre", "")
     sort = request.GET.get("sort", "latest")
     results = Movie.objects.all()  # 기본: 전체에서 시작
+    genres = Genre.objects.all()
+
 
     if query:
         results = results.filter(Q(title__icontains=query) | Q(original_title__icontains=query))
+
     if sort == "latest":
         results = results.order_by("-release_date")
     elif sort == "popular":
         results = results.order_by("-popularity")
+    if selected_genre:
+        results = results.filter(genres__id=selected_genre)
 
     page_size = int(request.GET.get("size", 20))
     paginator = Paginator(results, page_size)
@@ -80,6 +85,7 @@ def movie_search(request):
     end = min(current + 4, total)
     page_range = range(start, end + 1)
 
+
     return render(
         request,
         "search.html",
@@ -91,5 +97,7 @@ def movie_search(request):
             "results": page_obj.object_list,
             "page_range": page_range,
             "total_pages": total,
+            "selected_genre": selected_genre,
+            "genres": genres,
         },
     )
