@@ -1,10 +1,11 @@
+from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Avg, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
 from movie.models import Review
-from movie.models.movie import Movie,Genre
+from movie.models.movie import Genre, Movie
 
 
 def index(request):
@@ -47,10 +48,17 @@ def movie_detail(request, movie_id):
 @require_POST
 def create_review(request, movie_id):
     movie = get_object_or_404(Movie, id=movie_id)
-    review = Review.anonymous_review(
+    user = request.user
+
+    if user and Review.objects.filter(movie=movie, user=user).exists():
+        messages.warning(request, "이미 이 영화에 리뷰를 작성하셨습니다.")
+        return redirect("movie_detail", movie_id=movie.id)
+
+    review = Review.generate_anonymous_review(
         movie=movie,
+        user=request.user if request.user.is_authenticated else None,
         content=request.POST.get("content", "").strip(),
-        rating=request.POST.get("rating"),
+        rating=float(request.POST.get("rating")),
     )
 
     try:
@@ -68,7 +76,6 @@ def movie_search(request):
     sort = request.GET.get("sort", "latest")
     results = Movie.objects.all()  # 기본: 전체에서 시작
     genres = Genre.objects.all()
-
 
     if query:
         results = results.filter(Q(title__icontains=query) | Q(original_title__icontains=query))
@@ -91,7 +98,6 @@ def movie_search(request):
     start = max(current - 5, 1)
     end = min(current + 4, total)
     page_range = range(start, end + 1)
-
 
     return render(
         request,
