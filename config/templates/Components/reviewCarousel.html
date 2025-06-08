@@ -1,23 +1,21 @@
-<!-- Components/carousel.html -->
+{% comment %} Components/reviewCarousel.html {% endcomment %}
 <div class="mt-5 container">
-    <h3 class ="fw-bold">{{ title }}</h3>
+    <h3 class="fw-bold">{{ title }}</h3>
     <div id="{{ carousel_id }}" class="carousel carousel-dark slide" data-bs-ride="carousel">
         <div class="carousel-inner">
-            {% for movie in movie_list %}
-                {% if forloop.counter0|divisibleby:5 %}
+            {% for review in reviews %}
+                {% if forloop.counter0|divisibleby:3 %}
                     <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                        <div class="d-flex justify-content-center gap-3">
+                        <div class="row justify-content-center" style="padding-left: 48px ;padding-right: 48px;">
                 {% endif %}
-                            {% include 'Components/movieCard.html' %}
-                {% if forloop.counter0|add:1|divisibleby:5 or forloop.last %}
+                            {% include 'Components/reviewCard.html' with review=review %}
+                {% if forloop.counter0|add:1|divisibleby:3 or forloop.last %}
                         </div>
                     </div>
                 {% endif %}
             {% endfor %}
         </div>
-
-        <!-- Controls -->
-        <button class="carousel-control-prev" type="button" data-bs-target="#{{ carousel_id }}" data-bs-slide="prev" style="width: 5%">
+        <button class="carousel-control-prev" type="button" data-bs-target="#{{ carousel_id }}" data-bs-slide="prev" style="width: 5% ">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Previous</span>
         </button>
@@ -25,6 +23,5 @@
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Next</span>
         </button>
-
     </div>
 </div>

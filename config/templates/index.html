@@ -2,4 +2,7 @@
 {% block content %}
    {% include 'Components/carousel.html' with title="HOT 랭킹" movie_list=popular_movie carousel_id="popMovieCarousel" %}
    {% include 'Components/carousel.html' with title="랜덤 영화" movie_list=random_movie carousel_id="randomMovieCarousel" %}
+
+   {% include 'Components/reviewCarousel.html' with title="최근 리뷰" reviews=reviews carousel_id="reviewCarousel" %}
+
 {% endblock %}

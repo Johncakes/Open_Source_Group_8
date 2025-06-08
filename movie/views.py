@@ -12,10 +12,17 @@ def index(request):
     movie = Movie.objects.all()
     popular_movie = movie.order_by("-popularity")[:30]
     random_movie = movie.order_by("?")[:30]
+    reviews = Review.objects.select_related("movie").order_by("-created_at")[:10]
+
     return render(
         request,
         "index.html",
-        {"movie": movie, "popular_movie": popular_movie, "random_movie": random_movie},
+        {
+            "movie": movie,
+            "popular_movie": popular_movie,
+            "random_movie": random_movie,
+            "reviews": reviews,
+        },
     )
 
 
