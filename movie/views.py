@@ -81,8 +81,8 @@ def movie_search(request):
     current = page_obj.number
     total = paginator.num_pages
 
-    start = max(current - 5, 1)
-    end = min(current + 4, total)
+    start = max(current - 2, 1)
+    end = min(current + 2, total)
     page_range = range(start, end + 1)
 
 
