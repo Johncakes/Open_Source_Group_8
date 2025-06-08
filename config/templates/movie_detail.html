@@ -6,6 +6,7 @@
 
 {% block style %}
     <style>
+        /*배경 이미지*/
         .backdrop {
             background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.9)),
             url("https://image.tmdb.org/t/p/original{{ movie.backdrop_path }}");
@@ -39,13 +40,16 @@
 {% endblock %}
 
 {% block content %}
-    <!--배경 이미지 + 영화 정보 통합(한글제목, 개봉연도, 장르, 상영시간(분), 원제, 국가, 제작사)-->
+    <!--배경 이미지 + 영화 정보 통합(한글제목, 개봉연도, 장르(링크), 상영시간(분), 원제, 국가, 제작사)-->
     <section class="backdrop">
         <div class="container">
             <h1 class="display-5">{{ movie.title }}</h1>
             <p class="lead">{{ movie.release_date|date:"Y" }} ·
                 {% for genre in movie.genres.all %}
-                    {{ genre.name }}{% if not forloop.last %}, {% endif %}
+                    <a href="{% url 'movie_search' %}?genre={{ genre.id }}"
+                        class="btn btn-outline-light">
+                        {{ genre.name }}{% if not forloop.last %}, {% endif %}
+                    </a>
                 {% endfor %}
                 · {{ movie.runtime }}분
             </p>
@@ -128,6 +132,7 @@
             {% endfor %}
         </div>
 
+        <!--리뷰 작성-->
         <h3 class="text-secondary mb-3">리뷰 작성</h3>
         <form method="post" action="{% url 'create_review' movie.id %}" class="mb-5">
             {% csrf_token %}
@@ -152,7 +157,7 @@
             </div>
             <button type="submit" class="btn btn-primary">리뷰 등록</button>
         </form>
-        <!--리뷰 출력-->
+        <!--리뷰 출력: 이름, 내용, 평점, 작성일-->
         <h3 class="text-secondary mb-3">리뷰</h3>
         <div class="row g-4">
             {% for review in movie.reviews.all %}
