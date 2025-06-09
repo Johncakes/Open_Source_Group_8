@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
+    {% if recommended_movies %}
+        {% include 'Components/carousel.html' with title="추천 영화" movie_list=recommended_movies carousel_id="recommendedMovieCarousel" %}
+    {% endif %}
    {% include 'Components/carousel.html' with title="HOT 랭킹" movie_list=popular_movie carousel_id="popMovieCarousel" %}
    {% include 'Components/carousel.html' with title="랜덤 영화" movie_list=random_movie carousel_id="randomMovieCarousel" %}
 

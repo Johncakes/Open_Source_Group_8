@@ -14,6 +14,13 @@ def index(request):
     random_movie = movie.order_by("?")[:30]
     reviews = Review.objects.select_related("movie").order_by("-created_at")[:10]
 
+    recommended_movies = None
+    if request.user.is_authenticated:
+        top_genres = Genre.objects.top_reviewed_by_user(request.user)
+        recommended_movies = Movie.objects.recommended_by_user(
+            user=request.user, genres=top_genres, limit=15
+        )
+
     return render(
         request,
         "index.html",
@@ -22,6 +29,7 @@ def index(request):
             "popular_movie": popular_movie,
             "random_movie": random_movie,
             "reviews": reviews,
+            "recommended_movies" : recommended_movies,
         },
     )
 
