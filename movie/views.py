@@ -58,7 +58,7 @@ def create_review(request, movie_id):
     movie = get_object_or_404(Movie, id=movie_id)
     user = request.user
 
-    if user and Review.objects.filter(movie=movie, user=user).exists():
+    if user.is_authenticated and Review.objects.filter(movie=movie, user=user).exists():
         messages.warning(request, "이미 이 영화에 리뷰를 작성하셨습니다.")
         return redirect("movie_detail", movie_id=movie.id)
 
