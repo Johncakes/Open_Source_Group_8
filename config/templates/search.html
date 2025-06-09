@@ -101,10 +101,14 @@
 
                                     {{ movie.origin_country|default:"정보 없음" }}
                                 </li>
+                                <!--3개 까지만 출력-->
                                 <li>
-                                    {% for genre in movie.genres.all %}
-                                        {{ genre.name }}{% if not forloop.last %}, {% endif %}
+                                  {% with movie.genres.all as genres %}
+                                    {% for genre in genres|slice:":3" %}
+                                      {{ genre.name }}{% if not forloop.last %}, {% endif %}
                                     {% endfor %}
+                                    {% if genres|length > 3 %}...{% endif %}
+                                  {% endwith %}
                                 </li>
 
                                 <li>인기도: {{ movie.popularity|floatformat:1 }}</li>
