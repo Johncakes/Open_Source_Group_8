@@ -79,34 +79,42 @@ def create_review(request, movie_id):
 
 
 def movie_search(request):
+    # GET 요청에서 검색어(query), 장르 선택(selected_genre), 정렬 방식(sort) 값을 받아옴
     query = request.GET.get("q", "")
     selected_genre = request.GET.get("genre", "")
     sort = request.GET.get("sort", "latest")
-    results = Movie.objects.all()  # 기본: 전체에서 시작
+    # Movie 모델에서 모든 영화 데이터를 불러옴
+    results = Movie.objects.all()
+    # Genre 모델에서 모든 장르 목록을 가져옴
     genres = Genre.objects.all()
 
+    # 검색어제목(title) 또는 원제(original_title)인 경우
     if query:
         results = results.filter(Q(title__icontains=query) | Q(original_title__icontains=query))
-
+    # 정렬 조건 적용: 최신순 또는 인기순
     if sort == "latest":
         results = results.order_by("-release_date")
     elif sort == "popular":
         results = results.order_by("-popularity")
+    # 선택된 장르에 속한 영화로 필터링
     if selected_genre:
         results = results.filter(genres__id=selected_genre)
 
+    # 페이지 사이즈 설정 (기본값 20)
     page_size = int(request.GET.get("size", 20))
     paginator = Paginator(results, page_size)
+    # 현재 페이지 번호 가져오기
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 
+    # 페이지네이션 범위 계산
     current = page_obj.number
     total = paginator.num_pages
-
     start = max(current - 2, 1)
     end = min(current + 2, total)
     page_range = range(start, end + 1)
 
+    # 템플릿 렌더링: 검색 결과 및 관련 정보들 넘겨줌
     return render(
         request,
         "search.html",

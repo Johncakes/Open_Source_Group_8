@@ -8,7 +8,7 @@
     <style>
         /* 카드와 이미지 크기를 줄이기 위한 추가 CSS */
         .custom-card {
-            width: 280px; /* 필요에 따라 조정 */
+            width: 280px;
             height: 510px;
             margin: auto;
         }
@@ -25,10 +25,12 @@
             text-align: center; /* 가운데 정렬 */
             display: inline-block;
         }
+
+        /*제목 넘침  */
         li {  list-style-type: none;}
         .card-title,
         .card-text li {
-            white-space: nowrap;         /* 줄바꿈 안 함 */
+            white-space: nowrap;
             overflow: hidden;            /* 넘치는 텍스트 숨김 */
             text-overflow: ellipsis;     /* 말줄임표(...) */
         }
@@ -41,18 +43,19 @@
 <body class="bg-light">
 
 <div class="container py-5">
-
+    <!--검색어 입력 -->
     <form method="get" class="row justify-content-center mb-5">
         <div class="col-md-4">
             <input type="text" name="q" class="form-control" placeholder="검색어 입력" value="{{ query }}">
         </div>
-
+        <!-- 정렬 순서 선택 -->
         <div class="col-md-2">
             <select class="form-select" name="sort">
                 <option value="latest" {% if sort == 'latest' %}selected{% endif %}>최신순</option>
                 <option value="popular" {% if sort == 'popular' %}selected{% endif %}>인기순</option>
             </select>
         </div>
+        <!-- 장르 선택 -->
         <div class="col-md-2">
             <select class="form-select" name="genre">
                 <option value="">전체 장르</option>
@@ -72,8 +75,10 @@
 
     {% if results %}
         <h2 class="mb-3">검색 결과:</h2>
+        <!--창 크기에 따라 카드 갯수 조정 -->
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
             {% for movie in results %}
+                <!-- 영화 포스터, 제목, 날짜, 나라, 인기도 출력-->
                 <div class="col-md-6">
                 <a href="{% url 'movie_detail' movie.id %}" class="text-decoration-none text-dark">
                     <div class="card custom-card shadow-sm">
@@ -96,10 +101,14 @@
 
                                     {{ movie.origin_country|default:"정보 없음" }}
                                 </li>
+                                <!--3개 까지만 출력-->
                                 <li>
-                                    {% for genre in movie.genres.all %}
-                                        {{ genre.name }}{% if not forloop.last %}, {% endif %}
+                                  {% with movie.genres.all as genres %}
+                                    {% for genre in genres|slice:":3" %}
+                                      {{ genre.name }}{% if not forloop.last %}, {% endif %}
                                     {% endfor %}
+                                    {% if genres|length > 3 %}...{% endif %}
+                                  {% endwith %}
                                 </li>
 
                                 <li>인기도: {{ movie.popularity|floatformat:1 }}</li>
@@ -117,7 +126,9 @@
     {% endif %}
     <br>
     <nav class="mt-4">
+        <!-- 페이지 나눔 -->
         <ul class="pagination justify-content-center">
+            <!--전 페이지 -->
             {% if page_obj.has_previous %}
                 <li class="page-item">
                     <a class="page-link"
@@ -125,14 +136,14 @@
                         </a>
                 </li>
             {% endif %}
-
+            <!--최소 페이지 -->
             {% if page_range|first > 1 %}
                 <li class="page-item">
                     <a class="page-link" href="?page=1&q={{ query }}&sort={{ sort }}&size={{ page_size }}&genre={{ selected_genre }}">1</a>
                 </li>
                 <li class="page-item disabled"><span class="page-link">…</span></li>
             {% endif %}
-
+            <!--현태 페이지와 그 주위 -->
             {% for num in page_range %}
                 {% if num == page_obj.number %}
                     <li class="page-item active"><span class="page-link">{{ num }}</span></li>
@@ -143,7 +154,7 @@
                     </li>
                 {% endif %}
             {% endfor %}
-
+            <!--마지막 페이지 -->
             {% if page_range|last < total_pages %}
                 <li class="page-item disabled"><span class="page-link">…</span></li>
                 <li class="page-item">
@@ -151,7 +162,7 @@
                        href="?page={{ total_pages }}&q={{ query }}&sort={{ sort }}&size={{ page_size }}&genre={{ selected_genre }}">{{ total_pages }}</a>
                 </li>
             {% endif %}
-
+            <!--다음 페이지 -->
             {% if page_obj.has_next %}
                 <li class="page-item">
                     <a class="page-link"
