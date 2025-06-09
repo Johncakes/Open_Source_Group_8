@@ -48,7 +48,7 @@
                 {% for genre in movie.genres.all %}
                     <a href="{% url 'movie_search' %}?genre={{ genre.id }}"
                         class="btn btn-outline-light">
-                        {{ genre.name }}{% if not forloop.last %}, {% endif %}
+                        {{ genre.name }}
                     </a>
                 {% endfor %}
                 · {{ movie.runtime }}분
