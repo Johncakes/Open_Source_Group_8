@@ -1,0 +1,10 @@
+<a href="movies/{{ movie.id }}" style="text-decoration:none; color : inherit;">
+    <div class="card" style="width: 12rem">
+        <img src="https://image.tmdb.org/t/p/w500{{ movie.poster_path }}" class="card-img-top" alt="..." style="height: 300px ; object-fit: cover;"/>
+        <div class="card-body mr-3">
+            <h5 class="card-title text-truncate" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                {{ movie.title }}
+            </h5>
+        </div>
+    </div>
+</a>

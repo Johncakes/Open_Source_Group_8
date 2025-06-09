@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block title %}
+    <title>영화 검색</title>
+{% endblock %}
+
+{% block style %}
+    <style>
+        /* 카드와 이미지 크기를 줄이기 위한 추가 CSS */
+        .custom-card {
+            width: 280px; /* 필요에 따라 조정 */
+            height: 510px;
+            margin: auto;
+        }
+
+        .custom-card img {
+            height: 400px;
+
+            width: 100%;
+            object-fit: cover;
+        }
+
+        .page-link {
+            min-width: 40px; /* 고정된 최소 너비 */
+            text-align: center; /* 가운데 정렬 */
+            display: inline-block;
+        }
+        li {  list-style-type: none;}
+        .card-title,
+        .card-text li {
+            white-space: nowrap;         /* 줄바꿈 안 함 */
+            overflow: hidden;            /* 넘치는 텍스트 숨김 */
+            text-overflow: ellipsis;     /* 말줄임표(...) */
+        }
+
+
+    </style>
+{% endblock %}
+
+{% block content %}
+<body class="bg-light">
+
+<div class="container py-5">
+
+    <form method="get" class="row justify-content-center mb-5">
+        <div class="col-md-4">
+            <input type="text" name="q" class="form-control" placeholder="검색어 입력" value="{{ query }}">
+        </div>
+
+        <div class="col-md-2">
+            <select class="form-select" name="sort">
+                <option value="latest" {% if sort == 'latest' %}selected{% endif %}>최신순</option>
+                <option value="popular" {% if sort == 'popular' %}selected{% endif %}>인기순</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select class="form-select" name="genre">
+                <option value="">전체 장르</option>
+                {% for genre in genres %}
+                    <option value="{{ genre.id }}" {% if genre.id|stringformat:"s" == selected_genre %}selected{% endif %}>
+                        {{ genre.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">검색</button>
+        </div>
+    </form>
+
+
+
+    {% if results %}
+        <h2 class="mb-3">검색 결과:</h2>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
+            {% for movie in results %}
+                <div class="col-md-6">
+                <a href="{% url 'movie_detail' movie.id %}" class="text-decoration-none text-dark">
+                    <div class="card custom-card shadow-sm">
+                        {% if movie.poster_path %}
+                            <img src="https://image.tmdb.org/t/p/w500{{ movie.poster_path }}"
+                                 alt="영화 포스터"
+                                 class="img-fluid">
+                        {% else %}
+                            <div class="bg-secondary text-white d-flex align-items-center justify-content-center"
+                                 style="height: 200px;">
+                                포스터 없음
+                            </div>
+                        {% endif %}
+                        <div class="card-body p-2">
+                            <h5 class="card-title mb-1" style="font-size: 1rem;"><strong>{{ movie.title }}</strong></h5>
+                            <p class="card-text mb-0" style="font-size: 0.9rem;">
+
+                                <li>
+                                    {{ movie.release_date|default:"정보 없음" }} &nbsp; / &nbsp;
+
+                                    {{ movie.origin_country|default:"정보 없음" }}
+                                </li>
+                                <li>
+                                    {% for genre in movie.genres.all %}
+                                        {{ genre.name }}{% if not forloop.last %}, {% endif %}
+                                    {% endfor %}
+                                </li>
+
+                                <li>인기도: {{ movie.popularity|floatformat:1 }}</li>
+                            </p>
+                        </div>
+                    </div>
+                </a>
+                </div>
+            {% endfor %}
+        </div>
+    {% elif query %}
+        <div class="alert alert-warning mt-4" role="alert">
+            검색 결과가 없습니다.
+        </div>
+    {% endif %}
+    <br>
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link"
+                       href="?page={{ page_obj.previous_page_number }}&q={{ query }}&sort={{ sort }}&size={{ page_size }}&genre={{ selected_genre }}">«
+                        </a>
+                </li>
+            {% endif %}
+
+            {% if page_range|first > 1 %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1&q={{ query }}&sort={{ sort }}&size={{ page_size }}&genre={{ selected_genre }}">1</a>
+                </li>
+                <li class="page-item disabled"><span class="page-link">…</span></li>
+            {% endif %}
+
+            {% for num in page_range %}
+                {% if num == page_obj.number %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link"
+                           href="?page={{ num }}&q={{ query }}&sort={{ sort }}&size={{ page_size }}&genre={{ selected_genre }}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_range|last < total_pages %}
+                <li class="page-item disabled"><span class="page-link">…</span></li>
+                <li class="page-item">
+                    <a class="page-link"
+                       href="?page={{ total_pages }}&q={{ query }}&sort={{ sort }}&size={{ page_size }}&genre={{ selected_genre }}">{{ total_pages }}</a>
+                </li>
+            {% endif %}
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link"
+                       href="?page={{ page_obj.next_page_number }}&q={{ query }}&sort={{ sort }}&size={{ page_size }}">
+                        »</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+
+{% endblock %}
