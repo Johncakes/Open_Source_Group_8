@@ -18,7 +18,7 @@ def index(request):
     if request.user.is_authenticated:
         top_genres = Genre.objects.top_reviewed_by_user(request.user)
         recommended_movies = Movie.objects.recommended_by_user(
-            user=request.user, genres=top_genres, limit=12
+            user=request.user, genres=top_genres, limit=15
         )
 
     return render(
